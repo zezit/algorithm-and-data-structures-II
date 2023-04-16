@@ -21,9 +21,9 @@ public class App {
         for (int i = 0; i < Integer.parseInt(numLinhas); i++) {
             try {
                 ids[i] = s.nextLine();
-                // if (ids[i] == numLinhas) {
-                //     ids[i] = s.nextLine();
-                // }
+                if(ids[i].equals(numLinhas)){
+                    ids[i] = s.nextLine();
+                }
             } catch (Exception e) {
             }
         }
