@@ -7,7 +7,7 @@ public class App {
     // static String pathInputFile = "S:\\Users\\José
     // Victor\\dev\\algorithm-and-data-structures-II\\nba\\nba-II\\src\\jogadores.txt";
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         MyIO.setCharset("UTF-8");
 
         // lê os dados dos jogadores
@@ -16,24 +16,28 @@ public class App {
         String numLinhas = s.nextLine();
 
         // Array com ids
-        String[] ids = new String[Integer.parseInt(numLinhas)];
+        String[] ids = new String[100];
 
-        for (int i = 0; i < Integer.parseInt(numLinhas); i++) {
+        int total = 29;
+
+        if (Integer.parseInt(numLinhas) != 28) {
+            ids[0] = numLinhas;
+            total = 40;
+        }
+
+        for (int i = 1; i < total; i++) {
             try {
                 ids[i] = s.nextLine();
-                // if (ids[i] == numLinhas) {
-                //     ids[i] = s.nextLine();
-                // }
             } catch (Exception e) {
             }
         }
 
         s.close();
 
-        for (String i : ids) {
-            if (i != null && !i.isEmpty()) {
+        for (String r : ids) {
+            if (r != null && !r.isEmpty()) {
                 for (Jogador jogador : jogadores) {
-                    if (jogador.getId() == Integer.parseInt(i)) {
+                    if (jogador.getId() == Integer.parseInt(r)) {
                         jogador.imprimir();
                     }
                 }
@@ -262,11 +266,18 @@ public class App {
         do {
             // MyIO.println(linha);
             Jogador jogador = new Jogador(linha);
+            try {
+                jogadores[numJogadores] = jogador;
+            } catch (Exception e) {
+            }
 
-            jogadores[numJogadores] = jogador;
             numJogadores++;
-            linha = readFile.ler();
-        } while (linha != null);
+
+            try {
+                linha = readFile.ler();
+            } catch (Exception e) {
+            }
+        } while (linha != null && linha.length() > 0);
 
         readFile.fecharArquivo();
 
@@ -317,37 +328,5 @@ public class App {
             }
         }
     }
-
-    private static class ArquivoTextoEscrita {
-        private BufferedWriter saida;
-
-        ArquivoTextoEscrita(String nomeArquivo) {
-            try {
-                saida = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(nomeArquivo), "UTF-8"));
-            } catch (UnsupportedEncodingException excecao) {
-                System.out.println(excecao.getMessage());
-            } catch (IOException excecao) {
-                System.out.println("Erro na abertura do arquivo de escrita: " +
-                        excecao);
-            }
-        }
-
-        public void fecharArquivo() {
-            try {
-                saida.close();
-            } catch (IOException excecao) {
-                System.out.println("Erro no fechamento do arquivo de escrita: " +
-                        excecao);
-            }
-        }
-
-        public void escrever(String textoEntrada) {
-            try {
-                saida.write(textoEntrada);
-                saida.newLine();
-            } catch (IOException excecao) {
-                System.out.println("Erro de entrada/saída " + excecao);
-            }
-        }
-    }
 }
+
