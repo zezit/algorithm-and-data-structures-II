@@ -6,8 +6,7 @@ public class App {
     static Ordenate ordenate = new Ordenate();
     static Scanner s = new Scanner(System.in);
     static String pathInputFile = "/tmp/jogadores.txt";
-    // static String pathInputFile = "S:\\Users\\José
-    // Victor\\dev\\algorithm-and-data-structures-II\\nba\\ordenacao\\src\\jogadores.txt";
+    // static String pathInputFile = "S:\\Users\\José Victor\\dev\\algorithm-and-data-structures-II\\nba\\ordenacao\\src\\jogadores.txt";
     // static String pathInputFile =
     // "/home/jose/coding/algorithm-and-data-structures-II/nba/ordenacao/src/jogadores.txt";
 
@@ -60,25 +59,31 @@ public class App {
         s.close();
 
         // Método BubbleSort
-        // orderedJogadores = ordenate.bubble_sort(orderedJogadores);
+        // orderedJogadores = ordenate.bubbleSort(orderedJogadores);
         // for (Jogador jogador : orderedJogadores) {
         // jogador.imprimir();
         // }
 
         // Método SelectionSort
-        // orderedJogadores = ordenate.selection_sort(orderedJogadores);
+        // orderedJogadores = ordenate.selectionSort(orderedJogadores);
         // for (Jogador jogador : orderedJogadores) {
         // jogador.imprimir();
         // }
 
         // Método InsertionSort
-        // orderedJogadores = ordenate.insertion_sort(orderedJogadores);
+        // orderedJogadores = ordenate.insertionSort(orderedJogadores);
         // for (Jogador jogador : orderedJogadores) {
         // jogador.imprimir();
         // }
 
         // Método HeapSort
-        orderedJogadores = ordenate.heapSort(orderedJogadores);
+        // orderedJogadores = ordenate.heapSort(orderedJogadores);
+        // for (Jogador jogador : orderedJogadores) {
+        // jogador.imprimir();
+        // }
+
+        // Método MergeSort
+        orderedJogadores = ordenate.mergeSort(orderedJogadores);
         for (Jogador jogador : orderedJogadores) {
             jogador.imprimir();
         }
@@ -368,23 +373,21 @@ public class App {
     }
 
     public static class Ordenate {
-        public Jogador[] bubble_sort(Jogador[] arr) {
-            Jogador[] jogadoresOrdenados = arr;
-
+        public Jogador[] bubbleSort(Jogador[] arr) {
             Jogador aux = null;
-            for (int i = 0; i < jogadoresOrdenados.length; i++) {
-                for (int j = 1; j < jogadoresOrdenados.length - 1; j++) {
+            for (int i = 0; i < arr.length; i++) {
+                for (int j = 1; j < arr.length - 1; j++) {
                     int compareVal = 100;
 
-                    if (jogadoresOrdenados[j - 1].getCidadeNascimento().length() > 0) {
-                        compareVal = jogadoresOrdenados[j - 1].getCidadeNascimento()
-                                .compareTo(jogadoresOrdenados[j].getCidadeNascimento());
+                    if (arr[j - 1].getCidadeNascimento().length() > 0) {
+                        compareVal = arr[j - 1].getCidadeNascimento()
+                                .compareTo(arr[j].getCidadeNascimento());
                     }
 
                     if (compareVal == 0) {
                         // strings iguais
-                        compareVal = jogadoresOrdenados[j - 1].getNome()
-                                .compareTo(jogadoresOrdenados[j].getNome());
+                        compareVal = arr[j - 1].getNome()
+                                .compareTo(arr[j].getNome());
                     }
 
                     if (compareVal < 0) {
@@ -392,73 +395,70 @@ public class App {
 
                     } else {
                         // a > b (lexo)
-                        aux = jogadoresOrdenados[j - 1];
-                        jogadoresOrdenados[j - 1] = jogadoresOrdenados[j];
-                        jogadoresOrdenados[j] = aux;
+                        aux = arr[j - 1];
+                        arr[j - 1] = arr[j];
+                        arr[j] = aux;
                     }
                 }
             }
 
-            return jogadoresOrdenados;
+            return arr;
         }
 
-        public Jogador[] selection_sort(Jogador[] arr) {
-            Jogador[] jogadoresOrdenados = arr;
+        public Jogador[] selectionSort(Jogador[] arr) {
             Jogador auxJogador = new Jogador();
 
-            for (int i = 0; i < jogadoresOrdenados.length; i++) {
-                Jogador menor = jogadoresOrdenados[i];
-                for (int j = i + 1; j < jogadoresOrdenados.length; j++) {
-                    int compareVal = jogadoresOrdenados[j].getNome().compareTo(menor.getNome());
+            for (int i = 0; i < arr.length; i++) {
+                Jogador menor = arr[i];
+                for (int j = i + 1; j < arr.length; j++) {
+                    int compareVal = arr[j].getNome().compareTo(menor.getNome());
 
                     if (compareVal < 0) {
                         // a < b (lexo)
-                        menor = jogadoresOrdenados[j];
+                        menor = arr[j];
 
                     }
-                    if (jogadoresOrdenados[i].getNome() != menor.getNome()) {
-                        auxJogador = jogadoresOrdenados[i];
-                        jogadoresOrdenados[i] = menor;
-                        jogadoresOrdenados[j] = auxJogador;
+                    if (arr[i].getNome() != menor.getNome()) {
+                        auxJogador = arr[i];
+                        arr[i] = menor;
+                        arr[j] = auxJogador;
                     }
                 }
             }
 
-            return jogadoresOrdenados;
+            return arr;
         }
 
-        public Jogador[] insertion_sort(Jogador[] arr) {
-            Jogador[] jogadoresOrdenados = arr;
-
-            for (int i = 1; i < jogadoresOrdenados.length; i++) {
-                Jogador temp = jogadoresOrdenados[i];
+        public Jogador[] insertionSort(Jogador[] arr) {
+            for (int i = 1; i < arr.length; i++) {
+                Jogador temp = arr[i];
                 int j = i - 1;
 
                 // faz a ordenação por ano de nascimento
-                while (j >= 0 && jogadoresOrdenados[j].getAnoNascimento() > temp.getAnoNascimento()) {
-                    jogadoresOrdenados[j + 1] = jogadoresOrdenados[j];
+                while (j >= 0 && arr[j].getAnoNascimento() > temp.getAnoNascimento()) {
+                    arr[j + 1] = arr[j];
                     j--;
                 }
 
                 // caso ano for igual, verifica os nomes
-                if (j >= 0 && jogadoresOrdenados[j].getAnoNascimento() == temp.getAnoNascimento()) {
+                if (j >= 0 && arr[j].getAnoNascimento() == temp.getAnoNascimento()) {
                     // ordena por ordem alfabética
-                    int cmp = jogadoresOrdenados[j].getNome().compareToIgnoreCase(temp.getNome());
+                    int cmp = arr[j].getNome().compareToIgnoreCase(temp.getNome());
                     while (j >= 0 && cmp > 0 &&
-                            jogadoresOrdenados[j].getAnoNascimento() == temp.getAnoNascimento()) {
-                        jogadoresOrdenados[j + 1] = jogadoresOrdenados[j];
+                            arr[j].getAnoNascimento() == temp.getAnoNascimento()) {
+                        arr[j + 1] = arr[j];
                         j--;
                         if (j >= 0) {
                             // caso ainda existirem elementos anteriores, atualiza os nomes a serem
                             // comparados
-                            cmp = jogadoresOrdenados[j].getNome().compareToIgnoreCase(temp.getNome());
+                            cmp = arr[j].getNome().compareToIgnoreCase(temp.getNome());
                         }
                     }
                 }
 
-                jogadoresOrdenados[j + 1] = temp;
+                arr[j + 1] = temp;
             }
-            return jogadoresOrdenados;
+            return arr;
         }
 
         public void criaHeap(Jogador[] arr, Integer i, Integer f) {
@@ -516,5 +516,94 @@ public class App {
             }
             return arr;
         }
+
+        public Boolean mergeCompare(Jogador esquerdo, Jogador direito) {
+            if (esquerdo.getUniversidade().isEmpty() && !direito.getUniversidade().isEmpty()) {
+                // Se o jogador esquerdo não tiver nome de universidade e o jogador direito
+                // tiver,
+                // move o jogador esquerdo para o final do array.
+                return false;
+            } else if (!esquerdo.getUniversidade().isEmpty() && direito.getUniversidade().isEmpty()) {
+                // Se o jogador direito não tiver nome de universidade e o jogador esquerdo
+                // tiver,
+                // move o jogador direito para o final do array.
+                return true;
+            } else if (!esquerdo.getUniversidade().isEmpty() && !direito.getUniversidade().isEmpty()) {
+                // Se ambos os jogadores tiverem nomes de universidades, compare-os.
+                if (esquerdo.getUniversidade().compareToIgnoreCase(direito.getUniversidade()) < 0) {
+                    return true;
+                } else if (esquerdo.getUniversidade().compareToIgnoreCase(direito.getUniversidade()) == 0) {
+                    // Se os nomes de universidades forem iguais, compare os nomes dos jogadores.
+                    if (esquerdo.getNome().compareToIgnoreCase(direito.getNome()) < 0) {
+                        return true;
+                    }
+                }
+            } else if (esquerdo.getUniversidade().isEmpty() && direito.getUniversidade().isEmpty()) {
+                if (esquerdo.getNome().compareToIgnoreCase(direito.getNome()) < 0) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public Jogador[] merge(Jogador[] arr, Jogador[] left, Jogador[] right) {
+            Integer i = 0, j = 0, k = 0;
+
+            while (i < left.length && j < right.length) {
+                // verifica lexografica se o nome da universidade do elemento esquerdo é menor
+                // que do direito, caso sim, retorna TRUE
+                // caso forem iguais, compara os nomes dos jogadores seguindo a mesma lógica
+                if (mergeCompare(left[i], right[j])) {
+                    arr[k] = left[i];
+                    i++; // prox elemento do vetor esquerdo
+                } else {
+                    // caso o menor for o elemento do vetor da direita ele ocupa a posição
+                    arr[k] = right[j];
+                    j++; // prox elemento do vetor direito
+                }
+                k++; // prox elemento do vetor principal
+            }
+
+            // preenche o vetor principal com os elementos que sobraram do vetor esquerdo
+            while (i < left.length) {
+                arr[k] = left[i];
+                i++;
+                k++;
+            }
+
+            while (j < right.length) {
+                arr[k] = right[j];
+                j++;
+                k++;
+            }
+
+            return arr;
+        }
+
+        public Jogador[] mergeSort(Jogador[] arr) {
+            if (arr.length > 1) {
+                Integer meio = (arr.length - 0) / 2;
+
+                Jogador[] leftArr = Arrays.copyOfRange(arr, 0, meio);
+                Jogador[] rightArr = Arrays.copyOfRange(arr, meio, arr.length);
+
+                mergeSort(leftArr);
+                mergeSort(rightArr);
+
+                merge(arr, leftArr, rightArr);
+            }
+
+            return arr;
+        }
+
+        // public Jogador[] quickSort(Jogador[] arr, Integer inicio, Integer fim) {
+        // if (inicio < fim) {
+        // Integer pivo = particiona(arr, inicio, fim);
+        // quickSort(arr, inicio, pivo - 1);
+        // quickSort(arr, pivo + 1, fim);
+        // }
+
+        // return arr;
+        // }
     }
 }
