@@ -5,8 +5,8 @@ import java.io.*;
 public class App {
     static Ordenate ordenate = new Ordenate();
     static Scanner s = new Scanner(System.in);
-    static String pathInputFile = "/tmp/jogadores.txt";
-    // static String pathInputFile = "S:\\Users\\José Victor\\dev\\algorithm-and-data-structures-II\\nba\\ordenacao\\src\\jogadores.txt";
+    // static String pathInputFile = "/tmp/jogadores.txt";
+    static String pathInputFile = "S:\\Users\\José Victor\\dev\\algorithm-and-data-structures-II\\nba\\ordenacao\\src\\jogadores.txt";
     // static String pathInputFile =
     // "/home/jose/coding/algorithm-and-data-structures-II/nba/ordenacao/src/jogadores.txt";
 
@@ -71,7 +71,13 @@ public class App {
         // }
 
         // Método InsertionSort
-        orderedJogadores = ordenate.insertion_sort(orderedJogadores);
+        // orderedJogadores = ordenate.insertion_sort(orderedJogadores);
+        // for (Jogador jogador : orderedJogadores) {
+        // jogador.imprimir();
+        // }
+
+        // Método HeapSort
+        orderedJogadores = ordenate.heapSort(orderedJogadores);
         for (Jogador jogador : orderedJogadores) {
             jogador.imprimir();
         }
@@ -421,31 +427,94 @@ public class App {
         }
 
         public Jogador[] insertion_sort(Jogador[] arr) {
-            Jogador[] vetor = arr;
+            Jogador[] jogadoresOrdenados = arr;
 
-            for (int i = 1; i < vetor.length; i++) {
-                Jogador temp = vetor[i];
+            for (int i = 1; i < jogadoresOrdenados.length; i++) {
+                Jogador temp = jogadoresOrdenados[i];
                 int j = i - 1;
 
-                while (j >= 0 && vetor[j].getAnoNascimento() > temp.getAnoNascimento()) {
-                    vetor[j + 1] = vetor[j];
+                // faz a ordenação por ano de nascimento
+                while (j >= 0 && jogadoresOrdenados[j].getAnoNascimento() > temp.getAnoNascimento()) {
+                    jogadoresOrdenados[j + 1] = jogadoresOrdenados[j];
                     j--;
                 }
 
-                if (j >= 0 && vetor[j].getAnoNascimento() == temp.getAnoNascimento()) {
-                    int cmp = vetor[j].getNome().compareToIgnoreCase(temp.getNome());
-                    while (j >= 0 && vetor[j].getAnoNascimento() == temp.getAnoNascimento() && cmp > 0) {
-                        vetor[j + 1] = vetor[j];
+                // caso ano for igual, verifica os nomes
+                if (j >= 0 && jogadoresOrdenados[j].getAnoNascimento() == temp.getAnoNascimento()) {
+                    // ordena por ordem alfabética
+                    int cmp = jogadoresOrdenados[j].getNome().compareToIgnoreCase(temp.getNome());
+                    while (j >= 0 && cmp > 0 &&
+                            jogadoresOrdenados[j].getAnoNascimento() == temp.getAnoNascimento()) {
+                        jogadoresOrdenados[j + 1] = jogadoresOrdenados[j];
                         j--;
                         if (j >= 0) {
-                            cmp = vetor[j].getNome().compareToIgnoreCase(temp.getNome());
+                            // caso ainda existirem elementos anteriores, atualiza os nomes a serem
+                            // comparados
+                            cmp = jogadoresOrdenados[j].getNome().compareToIgnoreCase(temp.getNome());
                         }
                     }
                 }
 
-                vetor[j + 1] = temp;
+                jogadoresOrdenados[j + 1] = temp;
             }
-            return vetor;
+            return jogadoresOrdenados;
+        }
+
+        public void criaHeap(Jogador[] arr, Integer i, Integer f) {
+            Jogador aux = arr[i];
+            Integer j = i * 2 + 1;
+            while (j <= f) {
+                if (j < f) {
+                    // verifica quem é o maior entre os dois decendentes
+                    if (arr[j].getAltura() < arr[j + 1].getAltura()) {
+                        j = j + 1;
+                    } else if (arr[j].getAltura() == arr[j + 1].getAltura()) {
+                        // caso os anos forem igual ordena pelo nome
+                        if (arr[j].getNome().compareTo(arr[j + 1].getNome()) < 0) {
+                            j = j + 1;
+                        }
+                    }
+                }
+                // caso o maior descendente for maior que o pai, ele se torna o pai
+                if (aux.getAltura() < arr[j].getAltura()) {
+                    arr[i] = arr[j];
+                    i = j;
+                    j = 2 * i + 1;
+                } else if (aux.getAltura() == arr[j].getAltura()) {
+                    // caso os anos forem igual ordena pelo nome
+                    if (aux.getNome().compareTo(arr[j].getNome()) < 0) {
+                        arr[i] = arr[j];
+                        i = j;
+                        j = 2 * i + 1;
+                    }
+                } else {
+                    j = f + 1;
+                }
+
+                // antigo pai, se torna o ultimo filho analisado
+                arr[i] = aux;
+            }
+        }
+
+        public Jogador[] heapSort(Jogador[] arr) {
+            Jogador[] jogadoresOrdenados = arr; // armazena o vetor
+            Integer n = jogadoresOrdenados.length, i;
+
+            // cria heap com os dados
+            for (i = (n - 1) / 2; i >= 0; i--)
+                criaHeap(jogadoresOrdenados, i, n - 1);
+
+            for (i = n - 1; i >= 0; i--) {
+                // Coloca o maior elemento na posição correspondente
+                Jogador aux = jogadoresOrdenados[0];
+                jogadoresOrdenados[0] = jogadoresOrdenados[i];
+                jogadoresOrdenados[i] = aux;
+
+                // reconstrói heap
+                criaHeap(jogadoresOrdenados, 0, i - 1);
+            }
+
+            return jogadoresOrdenados;
         }
     }
 }
