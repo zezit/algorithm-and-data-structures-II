@@ -6,6 +6,7 @@ public class App {
     static Ordenate ordenate = new Ordenate();
     static Scanner s = new Scanner(System.in);
     static String pathInputFile = "/tmp/jogadores.txt";
+    // static String pathInputFile = "S:\\Users\\José Victor\\dev\\algorithm-and-data-structures-II\\nba\\ordenacao\\src\\jogadores.txt";
     // static String pathInputFile =
     // "/home/jose/coding/algorithm-and-data-structures-II/nba/ordenacao/src/jogadores.txt";
 
@@ -39,7 +40,7 @@ public class App {
 
         Jogador[] orderedJogadores;
         orderedJogadores = new Jogador[ids.length];
-        
+
         int integerId = 0;
         for (int i = 0; i < ids.length; i++) {
             for (Jogador jogador : jogadores) {
@@ -50,14 +51,27 @@ public class App {
                 }
                 if (jogador.getId() == integerId) {
                     orderedJogadores[i] = jogador;
+                    break;
                 }
             }
         }
 
         s.close();
 
-        // Ordena os jogadores
-        orderedJogadores = ordenate.bubble_sort(orderedJogadores);
+        // Método BubbleSort
+        // orderedJogadores = ordenate.bubble_sort(orderedJogadores);
+        // for (Jogador jogador : orderedJogadores) {
+        // jogador.imprimir();
+        // }
+
+        // Método SelectionSort
+        // orderedJogadores = ordenate.selection_sort(orderedJogadores);
+        // for (Jogador jogador : orderedJogadores) {
+        // jogador.imprimir();
+        // }
+
+        // Método InsertionSort
+        orderedJogadores = ordenate.insertion_sort(orderedJogadores);
         for (Jogador jogador : orderedJogadores) {
             jogador.imprimir();
         }
@@ -404,6 +418,34 @@ public class App {
             }
 
             return jogadoresOrdenados;
+        }
+
+        public Jogador[] insertion_sort(Jogador[] arr) {
+            Jogador[] vetor = arr;
+
+            for (int i = 1; i < vetor.length; i++) {
+                Jogador temp = vetor[i];
+                int j = i - 1;
+
+                while (j >= 0 && vetor[j].getAnoNascimento() > temp.getAnoNascimento()) {
+                    vetor[j + 1] = vetor[j];
+                    j--;
+                }
+
+                if (j >= 0 && vetor[j].getAnoNascimento() == temp.getAnoNascimento()) {
+                    int cmp = vetor[j].getNome().compareToIgnoreCase(temp.getNome());
+                    while (j >= 0 && vetor[j].getAnoNascimento() == temp.getAnoNascimento() && cmp > 0) {
+                        vetor[j + 1] = vetor[j];
+                        j--;
+                        if (j >= 0) {
+                            cmp = vetor[j].getNome().compareToIgnoreCase(temp.getNome());
+                        }
+                    }
+                }
+
+                vetor[j + 1] = temp;
+            }
+            return vetor;
         }
     }
 }
