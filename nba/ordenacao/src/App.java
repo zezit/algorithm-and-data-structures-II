@@ -5,8 +5,9 @@ import java.io.*;
 public class App {
     static Ordenate ordenate = new Ordenate();
     static Scanner s = new Scanner(System.in);
-    // static String pathInputFile = "/tmp/jogadores.txt";
-    static String pathInputFile = "S:\\Users\\José Victor\\dev\\algorithm-and-data-structures-II\\nba\\ordenacao\\src\\jogadores.txt";
+    static String pathInputFile = "/tmp/jogadores.txt";
+    // static String pathInputFile = "S:\\Users\\José
+    // Victor\\dev\\algorithm-and-data-structures-II\\nba\\ordenacao\\src\\jogadores.txt";
     // static String pathInputFile =
     // "/home/jose/coding/algorithm-and-data-structures-II/nba/ordenacao/src/jogadores.txt";
 
@@ -461,60 +462,59 @@ public class App {
         }
 
         public void criaHeap(Jogador[] arr, Integer i, Integer f) {
-            Jogador aux = arr[i];
-            Integer j = i * 2 + 1;
-            while (j <= f) {
-                if (j < f) {
-                    // verifica quem é o maior entre os dois decendentes
-                    if (arr[j].getAltura() < arr[j + 1].getAltura()) {
-                        j = j + 1;
-                    } else if (arr[j].getAltura() == arr[j + 1].getAltura()) {
-                        // caso os anos forem igual ordena pelo nome
-                        if (arr[j].getNome().compareTo(arr[j + 1].getNome()) < 0) {
-                            j = j + 1;
-                        }
-                    }
-                }
-                // caso o maior descendente for maior que o pai, ele se torna o pai
-                if (aux.getAltura() < arr[j].getAltura()) {
-                    arr[i] = arr[j];
-                    i = j;
-                    j = 2 * i + 1;
-                } else if (aux.getAltura() == arr[j].getAltura()) {
-                    // caso os anos forem igual ordena pelo nome
-                    if (aux.getNome().compareTo(arr[j].getNome()) < 0) {
-                        arr[i] = arr[j];
-                        i = j;
-                        j = 2 * i + 1;
-                    }
-                } else {
-                    j = f + 1;
-                }
+            int pai = i, finalPart = f;
 
-                // antigo pai, se torna o ultimo filho analisado
-                arr[i] = aux;
+            //
+            while ((pai * 2 + 1) <= finalPart) {
+                int filho = pai * 2 + 1; // filho representa o filho sendo analisado
+                int troca = pai; // troca representa o maior elemento entre os analisados
+
+                // compara o primeiro filho com o pai do nó
+                // caso a altura for maior ele devera se tornar o elementro de troca
+                if (arr[troca].getAltura() < arr[filho].getAltura())
+                    troca = filho;
+
+                // caso a altura for igual, compara os nomes seguindo a mesma lógica
+                else if (arr[troca].getAltura() == arr[filho].getAltura() &&
+                        arr[troca].getNome().compareTo(arr[filho].getNome()) < 0)
+                    troca = filho;
+
+                // realiza as mesmas comparações com o segundo filho e o atual elementro de
+                // troca
+                if (filho + 1 <= f && arr[troca].getAltura() < arr[filho + 1].getAltura())
+                    troca = filho + 1;
+
+                if (filho + 1 <= f && arr[troca].getAltura() == arr[filho + 1].getAltura() &&
+                        arr[troca].getNome().compareTo(arr[filho + 1].getNome()) < 0)
+                    troca = filho + 1;
+
+                // caso o pai do nó não seja o maior elemento, realiza a troca e ele se torna um
+                // filho
+                if (troca != pai) {
+                    Jogador temp = arr[pai];
+                    arr[pai] = arr[troca];
+                    arr[troca] = temp;
+                    pai = troca;
+                } else
+                    return;
             }
+
         }
 
         public Jogador[] heapSort(Jogador[] arr) {
-            Jogador[] jogadoresOrdenados = arr; // armazena o vetor
-            Integer n = jogadoresOrdenados.length, i;
+            // cria heap na primeira metade
+            for (int i = arr.length / 2 - 1; i >= 0; i--)
+                criaHeap(arr, i, arr.length - 1);
 
-            // cria heap com os dados
-            for (i = (n - 1) / 2; i >= 0; i--)
-                criaHeap(jogadoresOrdenados, i, n - 1);
+            // ordena o heap
+            for (int i = arr.length - 1; i >= 0; i--) {
+                Jogador temp = arr[0];
+                arr[0] = arr[i];
+                arr[i] = temp;
 
-            for (i = n - 1; i >= 0; i--) {
-                // Coloca o maior elemento na posição correspondente
-                Jogador aux = jogadoresOrdenados[0];
-                jogadoresOrdenados[0] = jogadoresOrdenados[i];
-                jogadoresOrdenados[i] = aux;
-
-                // reconstrói heap
-                criaHeap(jogadoresOrdenados, 0, i - 1);
+                criaHeap(arr, 0, i - 1);
             }
-
-            return jogadoresOrdenados;
+            return arr;
         }
     }
 }
