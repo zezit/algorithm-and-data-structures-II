@@ -24,7 +24,6 @@ public class App {
         try {
             id = s.nextLine();
         } catch (Exception e) {
-            // TODO: handle exception
         }
 
         do {
@@ -34,7 +33,6 @@ public class App {
             try {
                 id = s.nextLine();
             } catch (Exception e) {
-                // TODO: handle exception
             }
         } while (!id.equals("FIM") && id.length() > 0);
 
@@ -47,7 +45,6 @@ public class App {
                 try {
                     integerId = Integer.parseInt(ids[i]);
                 } catch (Exception e) {
-                    // TODO: handle exception
                 }
                 if (jogador.getId() == integerId) {
                     orderedJogadores[i] = jogador;
@@ -83,7 +80,13 @@ public class App {
         // }
 
         // Método MergeSort
-        orderedJogadores = ordenate.mergeSort(orderedJogadores);
+        // orderedJogadores = ordenate.mergeSort(orderedJogadores);
+        // for (Jogador jogador : orderedJogadores) {
+        // jogador.imprimir();
+        // }
+
+        // Método QuickSort
+        orderedJogadores = ordenate.quickSort(orderedJogadores);
         for (Jogador jogador : orderedJogadores) {
             jogador.imprimir();
         }
@@ -517,29 +520,29 @@ public class App {
             return arr;
         }
 
-        public Boolean mergeCompare(Jogador esquerdo, Jogador direito) {
-            if (esquerdo.getUniversidade().isEmpty() && !direito.getUniversidade().isEmpty()) {
+        public boolean mergeCompare(Jogador left, Jogador right) {
+            if (left.getUniversidade().isEmpty() && !right.getUniversidade().isEmpty()) {
                 // Se o jogador esquerdo não tiver nome de universidade e o jogador direito
                 // tiver,
                 // move o jogador esquerdo para o final do array.
                 return false;
-            } else if (!esquerdo.getUniversidade().isEmpty() && direito.getUniversidade().isEmpty()) {
+            } else if (!left.getUniversidade().isEmpty() && right.getUniversidade().isEmpty()) {
                 // Se o jogador direito não tiver nome de universidade e o jogador esquerdo
                 // tiver,
                 // move o jogador direito para o final do array.
                 return true;
-            } else if (!esquerdo.getUniversidade().isEmpty() && !direito.getUniversidade().isEmpty()) {
+            } else if (!left.getUniversidade().isEmpty() && !right.getUniversidade().isEmpty()) {
                 // Se ambos os jogadores tiverem nomes de universidades, compare-os.
-                if (esquerdo.getUniversidade().compareToIgnoreCase(direito.getUniversidade()) < 0) {
+                if (left.getUniversidade().compareToIgnoreCase(right.getUniversidade()) < 0) {
                     return true;
-                } else if (esquerdo.getUniversidade().compareToIgnoreCase(direito.getUniversidade()) == 0) {
+                } else if (left.getUniversidade().compareToIgnoreCase(right.getUniversidade()) == 0) {
                     // Se os nomes de universidades forem iguais, compare os nomes dos jogadores.
-                    if (esquerdo.getNome().compareToIgnoreCase(direito.getNome()) < 0) {
+                    if (left.getNome().compareToIgnoreCase(right.getNome()) < 0) {
                         return true;
                     }
                 }
-            } else if (esquerdo.getUniversidade().isEmpty() && direito.getUniversidade().isEmpty()) {
-                if (esquerdo.getNome().compareToIgnoreCase(direito.getNome()) < 0) {
+            } else if (left.getUniversidade().isEmpty() && right.getUniversidade().isEmpty()) {
+                if (left.getNome().compareToIgnoreCase(right.getNome()) < 0) {
                     return true;
                 }
             }
@@ -596,14 +599,67 @@ public class App {
             return arr;
         }
 
-        // public Jogador[] quickSort(Jogador[] arr, Integer inicio, Integer fim) {
-        // if (inicio < fim) {
-        // Integer pivo = particiona(arr, inicio, fim);
-        // quickSort(arr, inicio, pivo - 1);
-        // quickSort(arr, pivo + 1, fim);
-        // }
+        public boolean quickCompareLeft(Jogador left, Jogador pivot) {
+            if (left.getEstadoNascimento().compareToIgnoreCase(pivot.getEstadoNascimento()) < 0) {
+                return true;
+            } else if (left.getEstadoNascimento().compareToIgnoreCase(pivot.getEstadoNascimento()) == 0) {
+                if (left.getNome().compareToIgnoreCase(pivot.getNome()) < 0) {
+                    return true;
+                }
+            }
 
-        // return arr;
-        // }
+            return false;
+        }
+
+        private static int quickSortCompare(Jogador jogador1, Jogador jogador2) {
+            boolean vazio1 = jogador1.getEstadoNascimento().isEmpty();
+            boolean vazio2 = jogador2.getEstadoNascimento().isEmpty();
+        
+            if (vazio1 && vazio2) {
+                return jogador1.getNome().compareTo(jogador2.getNome());
+            } else if (vazio1) {
+                return 1;
+            } else if (vazio2) {
+                return -1;
+            } else {
+                int estadoComparison = jogador1.getEstadoNascimento().compareTo(jogador2.getEstadoNascimento());
+                if (estadoComparison == 0) {
+                    return jogador1.getNome().compareTo(jogador2.getNome());
+                } else {
+                    return estadoComparison;
+                }
+            }
+        }
+        
+
+        private int partition(Jogador[] arr, int start, int end) {
+            Jogador pivot = arr[end];
+            int i = start - 1;
+            for (int j = start; j < end; j++) {
+                if (quickSortCompare(arr[j], pivot) <= 0) {
+                    i++;
+                    Jogador aux = arr[i];
+                    arr[i] = arr[j];
+                    arr[j] = aux;
+                }
+            }
+            Jogador aux = arr[i + 1];
+            arr[i + 1] = arr[end];
+            arr[end] = aux;
+            return i + 1;
+        }
+
+        private void quickSortRecursive(Jogador[] arr, int start, int end) {
+            if (start < end) {
+                int pivotIndex = partition(arr, start, end);
+                quickSortRecursive(arr, start, pivotIndex - 1);
+                quickSortRecursive(arr, pivotIndex + 1, end);
+            }
+        }
+
+        public Jogador[] quickSort(Jogador[] arr) {
+            quickSortRecursive(arr, 0, arr.length - 1);
+            return arr;
+        }
     }
 }
