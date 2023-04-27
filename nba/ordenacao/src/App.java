@@ -5,7 +5,8 @@ import java.io.*;
 public class App {
     static Ordenate ordenate = new Ordenate();
     static Scanner s = new Scanner(System.in);
-    static String pathInputFile = "/tmp/jogadores.txt";
+    // static String pathInputFile = "/tmp/jogadores.txt";
+    static String pathInputFile = "/home/jose/coding/algorithm-and-data-structures-II/nba/ordenacao/src/tmp/jogadores.txt";
 
     public static void main(String[] args) {
         MyIO.setCharset("UTF-8");
@@ -374,29 +375,33 @@ public class App {
 
     public static class Ordenate {
         public Jogador[] bubbleSort(Jogador[] arr) {
-            Jogador aux = null;
             for (int i = 0; i < arr.length; i++) {
-                for (int j = 1; j < arr.length - 1; j++) {
-                    int compareVal = 100;
+                for (int j = 0; j < arr.length - i - 1; j++) {
+                    int compare = arr[j].getCidadeNascimento().compareTo(arr[j + 1].getCidadeNascimento());
 
-                    // compara a ordem com o elemento seguinte
-                    compareVal = arr[j - 1].getCidadeNascimento()
-                            .compareTo(arr[j].getCidadeNascimento());
-
-                    if (compareVal == 0) {
-                        // strings iguais
-                        compareVal = arr[j - 1].getNome()
-                                .compareTo(arr[j].getNome());
+                    if (compare == 0 || arr[j].getCidadeNascimento().isEmpty()) {
+                        compare = arr[j].getNome().compareTo(arr[j + 1].getNome());
+                        if (compare > 0) {
+                            // Ordena normalmente
+                            Jogador temp = arr[j];
+                            arr[j] = arr[j + 1];
+                            arr[j + 1] = temp;
+                        }
                     }
 
-                    // caso existir uma cidade no primeiro elemento
-                    if (arr[j - 1].getCidadeNascimento().length() > 0 || compareVal > 0) {
-                        // a > b (lexo)
-                        aux = arr[j - 1];
-                        arr[j - 1] = arr[j];
-                        arr[j] = aux;
+                    if (compare > 0) {
+                        // Ordena normalmente
+                        Jogador temp = arr[j];
+                        arr[j] = arr[j + 1];
+                        arr[j + 1] = temp;
                     }
                 }
+
+                for (Jogador jogador : arr) {
+                    jogador.imprimir();
+                }
+
+                break;
             }
 
             return arr;
