@@ -6,9 +6,6 @@ public class App {
     static Ordenate ordenate = new Ordenate();
     static Scanner s = new Scanner(System.in);
     static String pathInputFile = "/tmp/jogadores.txt";
-    // static String pathInputFile = "S:\\Users\\José Victor\\dev\\algorithm-and-data-structures-II\\nba\\ordenacao\\src\\jogadores.txt";
-    // static String pathInputFile =
-    // "/home/jose/coding/algorithm-and-data-structures-II/nba/ordenacao/src/jogadores.txt";
 
     public static void main(String[] args) {
         MyIO.setCharset("UTF-8");
@@ -56,10 +53,10 @@ public class App {
         s.close();
 
         // Método BubbleSort
-        // orderedJogadores = ordenate.bubbleSort(orderedJogadores);
-        // for (Jogador jogador : orderedJogadores) {
-        // jogador.imprimir();
-        // }
+        orderedJogadores = ordenate.bubbleSort(orderedJogadores);
+        for (Jogador jogador : orderedJogadores) {
+            jogador.imprimir();
+        }
 
         // Método SelectionSort
         // orderedJogadores = ordenate.selectionSort(orderedJogadores);
@@ -86,10 +83,10 @@ public class App {
         // }
 
         // Método QuickSort
-        orderedJogadores = ordenate.quickSort(orderedJogadores);
-        for (Jogador jogador : orderedJogadores) {
-            jogador.imprimir();
-        }
+        // orderedJogadores = ordenate.quickSort(orderedJogadores);
+        // for (Jogador jogador : orderedJogadores) {
+        // jogador.imprimir();
+        // }
     }
 
     public static class Jogador {
@@ -382,10 +379,9 @@ public class App {
                 for (int j = 1; j < arr.length - 1; j++) {
                     int compareVal = 100;
 
-                    if (arr[j - 1].getCidadeNascimento().length() > 0) {
-                        compareVal = arr[j - 1].getCidadeNascimento()
-                                .compareTo(arr[j].getCidadeNascimento());
-                    }
+                    // compara a ordem com o elemento seguinte
+                    compareVal = arr[j - 1].getCidadeNascimento()
+                            .compareTo(arr[j].getCidadeNascimento());
 
                     if (compareVal == 0) {
                         // strings iguais
@@ -393,10 +389,8 @@ public class App {
                                 .compareTo(arr[j].getNome());
                     }
 
-                    if (compareVal < 0) {
-                        // a < b (lexo)
-
-                    } else {
+                    // caso existir uma cidade no primeiro elemento
+                    if (arr[j - 1].getCidadeNascimento().length() > 0 || compareVal > 0) {
                         // a > b (lexo)
                         aux = arr[j - 1];
                         arr[j - 1] = arr[j];
@@ -614,7 +608,7 @@ public class App {
         private static int quickSortCompare(Jogador jogador1, Jogador jogador2) {
             boolean vazio1 = jogador1.getEstadoNascimento().isEmpty();
             boolean vazio2 = jogador2.getEstadoNascimento().isEmpty();
-        
+
             if (vazio1 && vazio2) {
                 return jogador1.getNome().compareTo(jogador2.getNome());
             } else if (vazio1) {
@@ -630,7 +624,6 @@ public class App {
                 }
             }
         }
-        
 
         private int partition(Jogador[] arr, int start, int end) {
             Jogador pivot = arr[end];
