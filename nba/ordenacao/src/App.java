@@ -5,8 +5,9 @@ import java.io.*;
 public class App {
     static Ordenate ordenate = new Ordenate();
     static Scanner s = new Scanner(System.in);
-    // static String pathInputFile = "/tmp/jogadores.txt";
-    static String pathInputFile = "/home/jose/coding/algorithm-and-data-structures-II/nba/ordenacao/src/tmp/jogadores.txt";
+    static String pathInputFile = "/tmp/jogadores.txt";
+    // static String pathInputFile =
+    // "/home/jose/coding/algorithm-and-data-structures-II/nba/ordenacao/src/tmp/jogadores.txt";
 
     public static void main(String[] args) {
         MyIO.setCharset("UTF-8");
@@ -54,40 +55,48 @@ public class App {
         s.close();
 
         // Método BubbleSort
-        orderedJogadores = ordenate.bubbleSort(orderedJogadores);
-        for (Jogador jogador : orderedJogadores) {
-            jogador.imprimir();
-        }
-
-        // Método SelectionSort
-        // orderedJogadores = ordenate.selectionSort(orderedJogadores);
+        // ordenate.startMeasure("bolha");
+        // orderedJogadores = ordenate.bubbleSort(orderedJogadores);
         // for (Jogador jogador : orderedJogadores) {
         // jogador.imprimir();
         // }
 
+        // Método SelectionSort
+        // ordenate.startMeasure("selecao");
+        // orderedJogadores = ordenate.selectionSort(orderedJogadores);
+        // for (Jogador jogador : orderedJogadores) {
+        //     jogador.imprimir();
+        // }
+
         // Método InsertionSort
+        // ordenate.startMeasure("insercao");
         // orderedJogadores = ordenate.insertionSort(orderedJogadores);
         // for (Jogador jogador : orderedJogadores) {
         // jogador.imprimir();
         // }
 
         // Método HeapSort
+        // ordenate.startMeasure("heapsort");
         // orderedJogadores = ordenate.heapSort(orderedJogadores);
         // for (Jogador jogador : orderedJogadores) {
         // jogador.imprimir();
         // }
 
         // Método MergeSort
+        // ordenate.startMeasure("mergesort");
         // orderedJogadores = ordenate.mergeSort(orderedJogadores);
         // for (Jogador jogador : orderedJogadores) {
         // jogador.imprimir();
         // }
 
         // Método QuickSort
-        // orderedJogadores = ordenate.quickSort(orderedJogadores);
-        // for (Jogador jogador : orderedJogadores) {
-        // jogador.imprimir();
-        // }
+        ordenate.startMeasure("quicksort");
+        orderedJogadores = ordenate.quickSort(orderedJogadores);
+        for (Jogador jogador : orderedJogadores) {
+        jogador.imprimir();
+        }
+
+        ordenate.finishMeasure();
     }
 
     public static class Jogador {
@@ -303,6 +312,7 @@ public class App {
         Jogador[] jogadores = new Jogador[20000];
         int numJogadores = 0;
         ArquivoTextoLeitura readFile = new ArquivoTextoLeitura(pathInputFile);
+
         String linha = readFile.ler();
         // pula primeira linha
         // linha = readFile.ler();
@@ -373,19 +383,135 @@ public class App {
         }
     }
 
+    public static class ArquivoTextoEscrita {
+        private BufferedWriter saida;
+
+        ArquivoTextoEscrita(String nomeArquivo) {
+            try {
+                saida = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(nomeArquivo), "UTF-8"));
+            } catch (UnsupportedEncodingException excecao) {
+                System.out.println(excecao.getMessage());
+            } catch (IOException excecao) {
+                System.out.println("Erro na abertura do arquivo de escrita: " +
+                        excecao);
+            }
+        }
+
+        public void fecharArquivo() {
+            try {
+                saida.close();
+            } catch (IOException excecao) {
+                System.out.println("Erro no fechamento do arquivo de escrita: " +
+                        excecao);
+            }
+        }
+
+        public void escrever(String textoEntrada) {
+            try {
+                saida.write(textoEntrada);
+                saida.newLine();
+            } catch (IOException excecao) {
+                System.out.println("Erro de entrada/saída " + excecao);
+            }
+        }
+    }
+
     public static class Ordenate {
+        private int comparacoes;
+        private int movimentacoes;
+        private long timeInicio;
+        private long timeDiff;
+        private String problemName;
+
+        public String getProblemName() {
+            return this.problemName;
+        }
+
+        public int getComparacoes() {
+            return this.comparacoes;
+        }
+
+        public void setComparacoes(int comparacoes) {
+            this.comparacoes = comparacoes;
+        }
+
+        public int getMovimentacoes() {
+            return this.movimentacoes;
+        }
+
+        public long getTimeInicio() {
+            return this.timeInicio;
+        }
+
+        public long getTimeDiff() {
+            return this.timeDiff;
+        }
+
+        public void setMovimentacoes(int movimentacoes) {
+            this.movimentacoes = movimentacoes;
+        }
+
+        public void setTimeInicio(long timeInicio) {
+            this.timeInicio = timeInicio;
+        }
+
+        public void setTimeDiff(long timeDiff) {
+            this.timeDiff = timeDiff;
+        }
+
+        public void setProblemName(String name) {
+            this.problemName = name;
+        }
+
+        public void startMeasure(String problem_name) {
+            this.comparacoes = 0;
+            this.movimentacoes = 0;
+            this.timeInicio = System.currentTimeMillis();
+            this.problemName = problem_name;
+        }
+
+        public void finishMeasure() {
+            this.timeDiff = System.currentTimeMillis() - this.timeInicio;
+
+            StringBuilder str = new StringBuilder();
+
+            str.append("796839\t")
+                    .append(this.timeDiff + "\t")
+                    .append(this.comparacoes + "\t")
+                    .append(this.movimentacoes);
+
+            ArquivoTextoEscrita measure = new ArquivoTextoEscrita("796839_" + this.problemName + ".txt");
+            try {
+                measure.escrever(str.toString());
+                measure.fecharArquivo();
+            } catch (Exception e) {
+                System.err.println("Erro ao criar arquivo de log: " + e.getMessage());
+            }
+        }
+
+        public void addMove() {
+            this.movimentacoes++;
+        }
+
+        public void addCompares() {
+            this.comparacoes++;
+        }
+
         public Jogador[] bubbleSort(Jogador[] arr) {
             for (int i = 0; i < arr.length; i++) {
                 for (int j = 0; j < arr.length - i - 1; j++) {
+                    ordenate.addCompares();
                     int compare = arr[j].getCidadeNascimento().compareTo(arr[j + 1].getCidadeNascimento());
 
                     if (compare == 0 || arr[j].getCidadeNascimento().isEmpty()) {
+                        ordenate.addCompares();
                         compare = arr[j].getNome().compareTo(arr[j + 1].getNome());
                         if (compare > 0) {
                             // Ordena normalmente
                             Jogador temp = arr[j];
                             arr[j] = arr[j + 1];
                             arr[j + 1] = temp;
+                            ordenate.addMove();
                         }
                     }
 
@@ -394,14 +520,9 @@ public class App {
                         Jogador temp = arr[j];
                         arr[j] = arr[j + 1];
                         arr[j + 1] = temp;
+                        ordenate.addMove();
                     }
                 }
-
-                for (Jogador jogador : arr) {
-                    jogador.imprimir();
-                }
-
-                break;
             }
 
             return arr;
@@ -413,6 +534,7 @@ public class App {
             for (int i = 0; i < arr.length; i++) {
                 Jogador menor = arr[i];
                 for (int j = i + 1; j < arr.length; j++) {
+                    ordenate.addCompares();
                     int compareVal = arr[j].getNome().compareTo(menor.getNome());
 
                     if (compareVal < 0) {
@@ -420,10 +542,14 @@ public class App {
                         menor = arr[j];
 
                     }
+
+                    ordenate.addCompares();
                     if (arr[i].getNome() != menor.getNome()) {
                         auxJogador = arr[i];
                         arr[i] = menor;
                         arr[j] = auxJogador;
+
+                        ordenate.addMove();
                     }
                 }
             }
@@ -436,24 +562,37 @@ public class App {
                 Jogador temp = arr[i];
                 int j = i - 1;
 
+                ordenate.addCompares();
                 // faz a ordenação por ano de nascimento
                 while (j >= 0 && arr[j].getAnoNascimento() > temp.getAnoNascimento()) {
+
+                    ordenate.addMove();
+
                     arr[j + 1] = arr[j];
                     j--;
                 }
 
+                ordenate.addCompares();
                 // caso ano for igual, verifica os nomes
                 if (j >= 0 && arr[j].getAnoNascimento() == temp.getAnoNascimento()) {
                     // ordena por ordem alfabética
+
+                    ordenate.addCompares();
                     int cmp = arr[j].getNome().compareToIgnoreCase(temp.getNome());
+
                     while (j >= 0 && cmp > 0 &&
                             arr[j].getAnoNascimento() == temp.getAnoNascimento()) {
+
+                        ordenate.addCompares();
+                        ordenate.addMove();
+
                         arr[j + 1] = arr[j];
                         j--;
                         if (j >= 0) {
                             // caso ainda existirem elementos anteriores, atualiza os nomes a serem
                             // comparados
                             cmp = arr[j].getNome().compareToIgnoreCase(temp.getNome());
+                            ordenate.addCompares();
                         }
                     }
                 }
@@ -473,26 +612,36 @@ public class App {
 
                 // compara o primeiro filho com o pai do nó
                 // caso a altura for maior ele devera se tornar o elementro de troca
-                if (arr[troca].getAltura() < arr[filho].getAltura())
+                if (arr[troca].getAltura() < arr[filho].getAltura()) {
+                    ordenate.addCompares();
                     troca = filho;
+                }
 
                 // caso a altura for igual, compara os nomes seguindo a mesma lógica
                 else if (arr[troca].getAltura() == arr[filho].getAltura() &&
-                        arr[troca].getNome().compareTo(arr[filho].getNome()) < 0)
+                        arr[troca].getNome().compareTo(arr[filho].getNome()) < 0) {
+                    ordenate.addCompares();
+                    ordenate.addCompares();
                     troca = filho;
+                }
 
                 // realiza as mesmas comparações com o segundo filho e o atual elementro de
                 // troca
-                if (filho + 1 <= f && arr[troca].getAltura() < arr[filho + 1].getAltura())
+                if (filho + 1 <= f && arr[troca].getAltura() < arr[filho + 1].getAltura()) {
                     troca = filho + 1;
+                }
+                ordenate.addCompares();
 
                 if (filho + 1 <= f && arr[troca].getAltura() == arr[filho + 1].getAltura() &&
-                        arr[troca].getNome().compareTo(arr[filho + 1].getNome()) < 0)
+                        arr[troca].getNome().compareTo(arr[filho + 1].getNome()) < 0) {
                     troca = filho + 1;
+                }
+                ordenate.addCompares();
 
                 // caso o pai do nó não seja o maior elemento, realiza a troca e ele se torna um
                 // filho
                 if (troca != pai) {
+                    ordenate.addMove();
                     Jogador temp = arr[pai];
                     arr[pai] = arr[troca];
                     arr[troca] = temp;
@@ -513,6 +662,7 @@ public class App {
                 Jogador temp = arr[0];
                 arr[0] = arr[i];
                 arr[i] = temp;
+                ordenate.addMove();
 
                 criaHeap(arr, 0, i - 1);
             }
@@ -520,31 +670,49 @@ public class App {
         }
 
         public boolean mergeCompare(Jogador left, Jogador right) {
+            ordenate.addCompares();
             if (left.getUniversidade().isEmpty() && !right.getUniversidade().isEmpty()) {
                 // Se o jogador esquerdo não tiver nome de universidade e o jogador direito
                 // tiver,
                 // move o jogador esquerdo para o final do array.
                 return false;
             } else if (!left.getUniversidade().isEmpty() && right.getUniversidade().isEmpty()) {
+                ordenate.addCompares();
                 // Se o jogador direito não tiver nome de universidade e o jogador esquerdo
                 // tiver,
                 // move o jogador direito para o final do array.
                 return true;
             } else if (!left.getUniversidade().isEmpty() && !right.getUniversidade().isEmpty()) {
+                ordenate.addCompares();
+                ordenate.addCompares();
                 // Se ambos os jogadores tiverem nomes de universidades, compare-os.
                 if (left.getUniversidade().compareToIgnoreCase(right.getUniversidade()) < 0) {
+                    ordenate.addCompares();
                     return true;
                 } else if (left.getUniversidade().compareToIgnoreCase(right.getUniversidade()) == 0) {
+                    ordenate.addCompares();
+                    ordenate.addCompares();
+                    ordenate.addCompares();
                     // Se os nomes de universidades forem iguais, compare os nomes dos jogadores.
                     if (left.getNome().compareToIgnoreCase(right.getNome()) < 0) {
                         return true;
                     }
                 }
             } else if (left.getUniversidade().isEmpty() && right.getUniversidade().isEmpty()) {
+                ordenate.addCompares();
+                ordenate.addCompares();
+                ordenate.addCompares();
+                ordenate.addCompares();
+
                 if (left.getNome().compareToIgnoreCase(right.getNome()) < 0) {
                     return true;
                 }
             }
+            ordenate.addCompares();
+            ordenate.addCompares();
+            ordenate.addCompares();
+            ordenate.addCompares();
+
             return false;
         }
 
@@ -555,10 +723,15 @@ public class App {
                 // verifica lexografica se o nome da universidade do elemento esquerdo é menor
                 // que do direito, caso sim, retorna TRUE
                 // caso forem iguais, compara os nomes dos jogadores seguindo a mesma lógica
+                ordenate.addCompares();
                 if (mergeCompare(left[i], right[j])) {
+                    ordenate.addMove();
+
                     arr[k] = left[i];
                     i++; // prox elemento do vetor esquerdo
                 } else {
+                    ordenate.addMove();
+
                     // caso o menor for o elemento do vetor da direita ele ocupa a posição
                     arr[k] = right[j];
                     j++; // prox elemento do vetor direito
@@ -568,12 +741,18 @@ public class App {
 
             // preenche o vetor principal com os elementos que sobraram do vetor esquerdo
             while (i < left.length) {
+                ordenate.addCompares();
+                ordenate.addMove();
+
                 arr[k] = left[i];
                 i++;
                 k++;
             }
 
             while (j < right.length) {
+                ordenate.addCompares();
+                ordenate.addMove();
+
                 arr[k] = right[j];
                 j++;
                 k++;
@@ -599,13 +778,17 @@ public class App {
         }
 
         public boolean quickCompareLeft(Jogador left, Jogador pivot) {
+            ordenate.addCompares();
             if (left.getEstadoNascimento().compareToIgnoreCase(pivot.getEstadoNascimento()) < 0) {
                 return true;
             } else if (left.getEstadoNascimento().compareToIgnoreCase(pivot.getEstadoNascimento()) == 0) {
+                ordenate.addCompares();
+                ordenate.addCompares();
                 if (left.getNome().compareToIgnoreCase(pivot.getNome()) < 0) {
                     return true;
                 }
             }
+            ordenate.addCompares();
 
             return false;
         }
@@ -614,15 +797,26 @@ public class App {
             boolean vazio1 = jogador1.getEstadoNascimento().isEmpty();
             boolean vazio2 = jogador2.getEstadoNascimento().isEmpty();
 
+            ordenate.addCompares();
             if (vazio1 && vazio2) {
+                ordenate.addCompares();
                 return jogador1.getNome().compareTo(jogador2.getNome());
             } else if (vazio1) {
+                ordenate.addCompares();
                 return 1;
             } else if (vazio2) {
+                ordenate.addCompares();
+                ordenate.addCompares();
                 return -1;
             } else {
+                ordenate.addCompares();
+                ordenate.addCompares();
+                ordenate.addCompares();
+
                 int estadoComparison = jogador1.getEstadoNascimento().compareTo(jogador2.getEstadoNascimento());
+
                 if (estadoComparison == 0) {
+                    ordenate.addCompares();
                     return jogador1.getNome().compareTo(jogador2.getNome());
                 } else {
                     return estadoComparison;
@@ -634,13 +828,16 @@ public class App {
             Jogador pivot = arr[end];
             int i = start - 1;
             for (int j = start; j < end; j++) {
+                ordenate.addCompares();
                 if (quickSortCompare(arr[j], pivot) <= 0) {
+                    ordenate.addMove();
                     i++;
                     Jogador aux = arr[i];
                     arr[i] = arr[j];
                     arr[j] = aux;
                 }
             }
+            ordenate.addMove();
             Jogador aux = arr[i + 1];
             arr[i + 1] = arr[end];
             arr[end] = aux;
@@ -648,6 +845,7 @@ public class App {
         }
 
         private void quickSortRecursive(Jogador[] arr, int start, int end) {
+            ordenate.addCompares();
             if (start < end) {
                 int pivotIndex = partition(arr, start, end);
                 quickSortRecursive(arr, start, pivotIndex - 1);
