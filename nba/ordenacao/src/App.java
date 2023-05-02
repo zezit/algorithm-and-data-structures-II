@@ -5,9 +5,8 @@ import java.io.*;
 public class App {
     static Ordenate ordenate = new Ordenate();
     static Scanner s = new Scanner(System.in);
-    static String pathInputFile = "/tmp/jogadores.txt";
-    // static String pathInputFile =
-    // "/home/jose/coding/algorithm-and-data-structures-II/nba/ordenacao/src/tmp/jogadores.txt";
+    // static String pathInputFile = "/tmp/jogadores.txt";
+    static String pathInputFile = "/home/jose/coding/algorithm-and-data-structures-II/nba/ordenacao/src/tmp/jogadores.txt";
 
     public static void main(String[] args) {
         MyIO.setCharset("UTF-8");
@@ -55,17 +54,17 @@ public class App {
         s.close();
 
         // Método BubbleSort
-        // ordenate.startMeasure("bolha");
-        // orderedJogadores = ordenate.bubbleSort(orderedJogadores);
-        // for (Jogador jogador : orderedJogadores) {
-        // jogador.imprimir();
-        // }
+        ordenate.startMeasure("bolha");
+        orderedJogadores = ordenate.bubbleSort(orderedJogadores);
+        for (Jogador jogador : orderedJogadores) {
+            jogador.imprimir();
+        }
 
         // Método SelectionSort
         // ordenate.startMeasure("selecao");
         // orderedJogadores = ordenate.selectionSort(orderedJogadores);
         // for (Jogador jogador : orderedJogadores) {
-        //     jogador.imprimir();
+        // jogador.imprimir();
         // }
 
         // Método InsertionSort
@@ -90,11 +89,11 @@ public class App {
         // }
 
         // Método QuickSort
-        ordenate.startMeasure("quicksort");
-        orderedJogadores = ordenate.quickSort(orderedJogadores);
-        for (Jogador jogador : orderedJogadores) {
-        jogador.imprimir();
-        }
+        // ordenate.startMeasure("quicksort");
+        // orderedJogadores = ordenate.quickSort(orderedJogadores);
+        // for (Jogador jogador : orderedJogadores) {
+        // jogador.imprimir();
+        // }
 
         ordenate.finishMeasure();
     }
@@ -497,30 +496,22 @@ public class App {
             this.comparacoes++;
         }
 
+        public static int compare(Jogador j1, Jogador j2) {
+            int cmp = j1.getCidadeNascimento().compareTo(j2.getCidadeNascimento());
+            if (cmp == 0) {
+                cmp = j1.getNome().compareTo(j2.getNome());
+            }
+            return cmp;
+        }
+
         public Jogador[] bubbleSort(Jogador[] arr) {
-            for (int i = 0; i < arr.length; i++) {
-                for (int j = 0; j < arr.length - i - 1; j++) {
-                    ordenate.addCompares();
-                    int compare = arr[j].getCidadeNascimento().compareTo(arr[j + 1].getCidadeNascimento());
-
-                    if (compare == 0 || arr[j].getCidadeNascimento().isEmpty()) {
-                        ordenate.addCompares();
-                        compare = arr[j].getNome().compareTo(arr[j + 1].getNome());
-                        if (compare > 0) {
-                            // Ordena normalmente
-                            Jogador temp = arr[j];
-                            arr[j] = arr[j + 1];
-                            arr[j + 1] = temp;
-                            ordenate.addMove();
-                        }
-                    }
-
-                    if (compare > 0) {
-                        // Ordena normalmente
+            int n = arr.length;
+            for (int i = 0; i < n - 1; i++) {
+                for (int j = 0; j < n - i - 1; j++) {
+                    if (compare(arr[j], arr[j + 1]) > 0) {
                         Jogador temp = arr[j];
                         arr[j] = arr[j + 1];
                         arr[j + 1] = temp;
-                        ordenate.addMove();
                     }
                 }
             }
