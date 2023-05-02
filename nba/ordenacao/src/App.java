@@ -6,7 +6,7 @@ public class App {
     static Ordenate ordenate = new Ordenate();
     static Scanner s = new Scanner(System.in);
     // static String pathInputFile = "/tmp/jogadores.txt";
-    static String pathInputFile = "/home/jose/coding/algorithm-and-data-structures-II/nba/ordenacao/src/tmp/jogadores.txt";
+    static String pathInputFile = "S:\\Users\\José Victor\\dev\\algorithm-and-data-structures-II\\nba\\ordenacao\\src\\tmp\\jogadores.txt";
 
     public static void main(String[] args) {
         MyIO.setCharset("UTF-8");
@@ -497,11 +497,30 @@ public class App {
         }
 
         public static int compare(Jogador j1, Jogador j2) {
-            int cmp = j1.getCidadeNascimento().compareTo(j2.getCidadeNascimento());
-            if (cmp == 0) {
-                cmp = j1.getNome().compareTo(j2.getNome());
+            // Verifica se ambos os jogadores não têm cidade de nascimento
+            if (j1.getCidadeNascimento().isEmpty() && j2.getCidadeNascimento().isEmpty()) {
+                // Compara com base no nome
+                ordenate.addCompares();
+                return j1.getNome().compareTo(j2.getNome());
+            } else {
+                // Compara com base na cidade de nascimento
+                int cmp = j1.getCidadeNascimento().compareTo(j2.getCidadeNascimento());
+                ordenate.addCompares();
+                // Se eles tiverem a mesma cidade de nascimento, compara com base no nome
+                if (cmp == 0) {
+                    cmp = j1.getNome().compareTo(j2.getNome());
+                    ordenate.addCompares();
+                }
+                // Verifica se j1 não tem cidade de nascimento, colocando-o no final da lista
+                else if (j1.getCidadeNascimento().isEmpty()) {
+                    cmp = 1;
+                }
+                // Verifica se j2 não tem cidade de nascimento, colocando-o no final da lista
+                else if (j2.getCidadeNascimento().isEmpty()) {
+                    cmp = -1;
+                }
+                return cmp;
             }
-            return cmp;
         }
 
         public Jogador[] bubbleSort(Jogador[] arr) {
@@ -512,7 +531,9 @@ public class App {
                         Jogador temp = arr[j];
                         arr[j] = arr[j + 1];
                         arr[j + 1] = temp;
+                        ordenate.addMove();
                     }
+                    ordenate.addCompares();
                 }
             }
 
