@@ -5,51 +5,26 @@ import java.io.*;
 public class App {
     static Ordenate ordenate = new Ordenate();
     static Scanner s = new Scanner(System.in);
-    static String pathInputFile = "/tmp/jogadores.txt";
-    // static String pathInputFile = "S:\\Users\\José Victor\\dev\\algorithm-and-data-structures-II\\nba\\ordenacao\\src\\tmp\\jogadores.txt";
-    // static String pathInputFile = "/home/jose/coding/algorithm-and-data-structures-II/nba/ordenacao/src/tmp/jogadores.txt";
+    static String pathInputFile = "./jogadores.txt";
+
+    // static String pathInputFile = "S:\\Users\\José
+    // Victor\\dev\\algorithm-and-data-structures-II\\nba\\ordenacao\\src\\tmp\\jogadores.txt";
+    // static String pathInputFile =
+    // "/home/jose/coding/algorithm-and-data-structures-II/nba/ordenacao/src/tmp/jogadores.txt";
     public static void main(String[] args) {
         MyIO.setCharset("UTF-8");
 
         // lê os dados dos jogadores
         Jogador[] jogadores = lerJogadores();
 
-        // Array com ids
-        String[] ids = new String[0];
+        // lê as ids dos jogadores para serem ordenados
+        String[] ids = readUserEntry();
 
-        String id = "";
-
-        try {
-            id = s.nextLine();
-        } catch (Exception e) {
-        }
-
-        do {
-            ids = Arrays.copyOf(ids, ids.length + 1);
-            ids[ids.length - 1] = id;
-
-            try {
-                id = s.nextLine();
-            } catch (Exception e) {
-            }
-        } while (!id.equals("FIM") && id.length() > 0);
+        // cria a fila com os jogadores de ids entrados pelo usuário
+        PlayersQueue queue = new PlayersQueue(ids);
 
         Jogador[] orderedJogadores;
         orderedJogadores = new Jogador[ids.length];
-
-        int integerId = 0;
-        for (int i = 0; i < ids.length; i++) {
-            for (Jogador jogador : jogadores) {
-                try {
-                    integerId = Integer.parseInt(ids[i]);
-                } catch (Exception e) {
-                }
-                if (jogador.getId() == integerId) {
-                    orderedJogadores[i] = jogador;
-                    break;
-                }
-            }
-        }
 
         s.close();
 
@@ -96,6 +71,28 @@ public class App {
         // }
 
         ordenate.finishMeasure();
+    }
+
+    private static String[] readUserEntry() {
+        String[] ids = new String[0];
+        String id = "";
+
+        try {
+            id = s.nextLine();
+        } catch (Exception e) {
+        }
+
+        do {
+            ids = Arrays.copyOf(ids, ids.length + 1);
+            ids[ids.length - 1] = id;
+
+            try {
+                id = s.nextLine();
+            } catch (Exception e) {
+            }
+        } while (!id.equals("FIM") && id.length() > 0);
+
+        return ids;
     }
 
     public static class Jogador {
@@ -869,5 +866,58 @@ public class App {
             quickSortRecursive(arr, 0, arr.length - 1);
             return arr;
         }
+    }
+
+    public static class PlayersQueue {
+        private int queueSize = 5;
+        private int numItens = 0;
+        private int firstElement = 0;
+        private int lastElement = -1;
+        private Jogador[] fifo = new Jogador[queueSize];
+
+        public PlayersQueue(String[] ids, Jogador[] jogadores) {
+            // preenche a fila de jogadores
+            int integerId = 0;
+            for (int i = 0; i < ids.length; i++) {
+                for (Jogador jogador : jogadores) {
+                    try {
+                        integerId = Integer.parseInt(ids[i]);
+                    } catch (Exception e) {
+                    }
+                    if (jogador.getId() == integerId) {
+                        this.enqueue(jogador);
+                        break;
+                    }
+                }
+            }
+        }
+
+        private void enqueue(Jogador jogador) {
+            if (this.isFull()) {
+                this.lastElement = -1;
+            }
+
+            this.lastElement++;
+            this.fifo[this.lastElement] = jogador;
+            this.numItens++;
+        }
+
+        private boolean isFull() {
+            if (this.lastElement == this.queueSize - 1) {
+                // fila está cheia
+                return true;
+            }
+
+            return false;
+        }
+
+        private boolean isEmpty() {
+            if (this.numItens == 0) {
+                return true;
+            }
+
+            return false;
+        }
+
     }
 }
