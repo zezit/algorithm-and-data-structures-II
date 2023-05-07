@@ -4,11 +4,12 @@ import java.io.*;
 
 public class App {
     static Scanner s = new Scanner(System.in);
-    // static String pathInputFile = "/tmp/jogadores.txt";
-    static String pathInputFile = "/home/jose/coding/algorithm-and-data-structures-II/nba/filas/jogadores.txt";
+    static String pathInputFile = "/tmp/jogadores.txt";
+    // static String pathInputFile =
+    // "/home/jose/coding/algorithm-and-data-structures-II/nba/filas/jogadores.txt";
+
     static Jogador[] jogadores = lerJogadores();
     static PlayersQueue queue = new PlayersQueue();
-    static ArquivoTextoEscrita saida = new ArquivoTextoEscrita("saida.txt");
     static String[] ids = new String[0];
 
     public static void main(String[] args) {
@@ -29,6 +30,7 @@ public class App {
                 }
                 if (jogador.getId() == integerId) {
                     queue.enqueue(jogador);
+                    System.out.println(Math.round(queue.obterMediaAltura()));
                 }
             }
         }
@@ -43,8 +45,19 @@ public class App {
         } catch (Exception e) {
         }
 
-        while (numReads > 0 && s.hasNextLine()) {
-            String[] userInput = s.nextLine().split(" ");
+        String[] inputs = new String[numReads];
+
+        for (int i = 0; i < numReads; i++) {
+            try {
+                inputs[i] = s.nextLine();
+            } catch (Exception e) {
+            }
+        }
+
+        System.out.println("");
+
+        for (String string : inputs) {
+            String[] userInput = string.split(" ");
 
             switch (userInput[0]) {
                 case "I":
@@ -52,36 +65,33 @@ public class App {
                     try {
                         enqueJ = getPlayerById(Integer.parseInt(userInput[1]));
                     } catch (Exception e) {
+                        System.out.print(e);
                     }
 
                     if (enqueJ != null) {
                         queue.enqueue(enqueJ);
                         // print media arredondada das alturas
                         System.out.println(Math.round(queue.obterMediaAltura()));
-                        saida.escrever(String.valueOf(Math.round(queue.obterMediaAltura())));
                     }
                     break;
                 case "R":
                     Jogador dequeJ = queue.dequeue();
+
                     if (dequeJ != null) {
                         System.out.println("(R) " + dequeJ.getNome());
-                        // also write on file saida
-                        saida.escrever("(R) " + dequeJ.getNome());
                     }
                     break;
                 default:
                     break;
             }
-
-            numReads--;
         }
 
-        s.close();
         queue.showQueue();
+        s.close();
     }
 
     public static void readUserEntry() {
-        String id = "";
+        String id = new String();
 
         try {
             id = s.nextLine();
@@ -267,6 +277,8 @@ public class App {
 
         // Outros métodos
         public void imprimir() {
+            System.out.print("## " + this.id);
+
             if (this.nome != null && !this.nome.isEmpty()) {
                 System.out.print(" ## " + this.nome);
             } else {
@@ -309,7 +321,7 @@ public class App {
                 System.out.print(" ## nao informado");
             }
 
-            System.out.println();
+            System.out.print(" ##\n");
         }
     }
 
@@ -442,7 +454,6 @@ public class App {
             }
 
             this.fifo[this.lastElement] = jogador;
-
             this.lastElement = (this.lastElement + 1) % this.queueSize;
         }
 
@@ -459,7 +470,7 @@ public class App {
         }
 
         public void showQueue() {
-            int i = this.firstElement, pos = 1;
+            int i = this.firstElement, pos = 0;
             while (i != this.lastElement) {
                 System.out.print("[" + pos++ + "] ");
                 this.fifo[i].imprimir();
@@ -496,6 +507,5 @@ public class App {
             }
             return false;
         }
-
     }
 }
