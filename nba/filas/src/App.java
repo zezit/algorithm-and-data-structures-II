@@ -5,8 +5,7 @@ import java.io.*;
 public class App {
     static Scanner s = new Scanner(System.in);
     static String pathInputFile = "/tmp/jogadores.txt";
-    // static String pathInputFile =
-    // "/home/jose/coding/algorithm-and-data-structures-II/nba/filas/jogadores.txt";
+    // static String pathInputFile = "/home/jose/coding/algorithm-and-data-structures-II/nba/filas/jogadores.txt";
 
     static Jogador[] jogadores = lerJogadores();
     static PlayersQueue queue = new PlayersQueue();
@@ -53,8 +52,9 @@ public class App {
             } catch (Exception e) {
             }
         }
+        s.close();
 
-        System.out.println("");
+        // System.out.println("");
 
         for (String string : inputs) {
             String[] userInput = string.split(" ");
@@ -87,7 +87,6 @@ public class App {
         }
 
         queue.showQueue();
-        s.close();
     }
 
     public static void readUserEntry() {
