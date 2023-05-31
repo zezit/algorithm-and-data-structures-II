@@ -4,18 +4,18 @@ import java.io.*;
 
 public class App {
     static Scanner s = new Scanner(System.in);
-    // static String pathInputFile = "/tmp/jogadores.txt";
-    static String pathInputFile = "/home/jose/coding/algorithm-and-data-structures-II/nba/lista/jogadores.txt";
+    static String pathInputFile = "/tmp/jogadores.txt";
+    // static String pathInputFile = "/home/jose/coding/algorithm-and-data-structures-II/nba/lista/jogadores.txt";
 
     static Jogador[] jogadores = lerJogadores();
-    static PlayerList queue = new PlayerList();
+    static PlayerList mainList = new PlayerList();
     static String[] ids = new String[0];
 
     public static void main(String[] args) {
         MyIO.setCharset("UTF-8");
 
         // cria a fila com os jogadores de ids entrados pelo usuário
-        queue = new PlayerList();
+        mainList = new PlayerList();
 
         // lê as ids dos jogadores para serem ordenados
         readUserEntry();
@@ -28,7 +28,7 @@ public class App {
                 } catch (Exception e) {
                 }
                 if (jogador.getId() == integerId) {
-                    queue.push(jogador);
+                    mainList.insertOnEnd(jogador);
                 }
             }
         }
@@ -55,8 +55,18 @@ public class App {
         for (String string : inputs) {
             String[] userInput = string.split(" ");
 
+            /*
+             * II: inserir no início;
+             * • I* inserir em uma determinada posição;
+             * • IF: inserir no final;
+             * • RI: remover do início;
+             * • R*: remover de uma determinada posição;
+             * • RF: remover do final.
+             * 
+             */
             switch (userInput[0]) {
-                case "I":
+                // start insert
+                case "II":
                     Jogador pushJ = null;
                     try {
                         pushJ = getPlayerById(Integer.parseInt(userInput[1]));
@@ -65,22 +75,48 @@ public class App {
                     }
 
                     if (pushJ != null) {
-                        queue.push(pushJ);
+                        mainList.insertAtStart(pushJ);
                     }
                     break;
-                case "R":
-                    Jogador dequeJ = queue.pop();
-
-                    if (dequeJ != null) {
-                        System.out.println("(R) " + dequeJ.getNome());
+                case "I*":
+                    Jogador pushJ2 = null;
+                    try {
+                        pushJ2 = getPlayerById(Integer.parseInt(userInput[2]));
+                    } catch (Exception e) {
+                        System.out.print(e);
                     }
+
+                    if (pushJ2 != null) {
+                        mainList.insert(pushJ2, Integer.parseInt(userInput[1]));
+                    }
+                    break;
+                case "IF":
+                    Jogador pushJ3 = null;
+                    try {
+                        pushJ3 = getPlayerById(Integer.parseInt(userInput[1]));
+                    } catch (Exception e) {
+                        System.out.print(e);
+                    }
+
+                    if (pushJ3 != null) {
+                        mainList.insertOnEnd(pushJ3);
+                    }
+                    break;
+                case "RI":
+                    mainList.removeStart();
+                    break;
+                case "R*":
+                    mainList.remove(Integer.parseInt(userInput[1]));
+                    break;
+                case "RF":
+                    mainList.removeEnd();
                     break;
                 default:
                     break;
             }
         }
 
-        queue.showStack();
+        mainList.showStack();
         s.close();
     }
 
@@ -431,14 +467,14 @@ public class App {
     public static class PlayerList {
         private Jogador[] list;
         private int listSize;
-        private int lastElement;
-        private int firstElement;
+        private Jogador lastElement;
+        private Jogador firstElement;
 
         public PlayerList(int maxSize) {
             this.listSize = maxSize;
             this.list = new Jogador[this.listSize];
-
-            this.tamanho = 0;
+            this.lastElement = null;
+            this.firstElement = null;
         }
 
         public PlayerList() {
@@ -446,49 +482,127 @@ public class App {
         }
 
         public void insertOnEnd(Jogador jogador) {
-            if (this.isFull()) {
-                this.pop();
+            // aumenta o array
+            this.list = Arrays.copyOf(this.list, this.list.length + 1);
+            this.listSize++;
+            this.lastElement = jogador;
+            this.list[this.listSize - 1] = jogador;
+        }
+
+        public void insert(Jogador jogador, int position) {
+            // validade position
+            if (position < 0) {
+                return;
+            }
+
+            if (position >= this.listSize) {
+                this.insertOnEnd(jogador);
+                return;
             }
 
             // aumenta o array
             this.list = Arrays.copyOf(this.list, this.list.length + 1);
             this.listSize++;
-            this.lastElement++;
-            this.list[this.lastElement] = jogador;
+
+            // move os elementos para a direita
+            for (int i = this.listSize - 1; i > position; i--) {
+                this.list[i] = this.list[i - 1];
+            }
+
+            // insere o elemento na posição
+            this.list[position] = jogador;
         }
 
-        public Jogador pop() {
+        public void insertAtStart(Jogador jogador) {
+            // aumenta o array
+            this.list = Arrays.copyOf(this.list, this.list.length + 1);
+            this.listSize++;
+
+            // move os elementos para a direita
+            for (int i = this.listSize - 1; i > 0; i--) {
+                this.list[i] = this.list[i - 1];
+            }
+
+            // insere o elemento na posição
+            this.list[0] = jogador;
+        }
+
+        public Jogador removeStart() {
             if (this.isEmpty()) {
                 return null;
             }
 
-            Jogador jogador = this.list[this.lastElement];
+            Jogador removed = this.list[0];
+            System.out.println("(R) " + removed.getNome());
 
-            this.lastElement--;
+            // move os elementos para a esquerda
+            for (int i = 0; i < this.listSize - 1; i++) {
+                this.list[i] = this.list[i + 1];
+            }
 
-            return jogador;
+            // diminui o array
+            this.list = Arrays.copyOf(this.list, this.list.length - 1);
+            this.listSize--;
+
+            return removed;
+        }
+
+        public Jogador removeEnd() {
+            if (this.isEmpty()) {
+                return null;
+            }
+
+            Jogador removed = this.list[this.listSize - 1];
+            System.out.println("(R) " + removed.getNome());
+
+            // diminui o array
+            this.list = Arrays.copyOf(this.list, this.list.length - 1);
+            this.listSize--;
+
+            this.lastElement = this.list[this.listSize - 1];
+
+            return removed;
+        }
+
+        public Jogador remove(int position) {
+            if (this.isEmpty()) {
+                return null;
+            }
+
+            if (position < 0 || position > this.listSize) {
+                return null;
+            }
+
+            Jogador removed = this.list[position];
+            System.out.println("(R) " + removed.getNome());
+
+            // move os elementos para a esquerda
+            for (int i = position; i < this.listSize - 1; i++) {
+                this.list[i] = this.list[i + 1];
+            }
+
+            // diminui o array
+            this.list = Arrays.copyOf(this.list, this.list.length - 1);
+            this.listSize--;
+
+            this.firstElement = this.list[0];
+            this.lastElement = this.list[this.listSize - 1];
+
+            return removed;
         }
 
         public void showStack() {
             int i = 0, pos = 0;
-            while (i <= this.lastElement) {
+            while (i <= this.listSize - 1) {
                 System.out.print("[" + pos++ + "] ");
                 this.list[i].imprimir();
                 i++;
             }
         }
 
-        private boolean isFull() {
-            if (this.lastElement == this.listSize - 1) {
-                return true;
-            }
-            return false;
-        }
-
         private boolean isEmpty() {
-            if (this.lastElement == -1) {
+            if (this.firstElement == this.lastElement)
                 return true;
-            }
             return false;
         }
     }
